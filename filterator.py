@@ -3,6 +3,34 @@ from collections import namedtuple
 from decimal import Decimal
 
 
+class Filterable(object):
+    def __init__(self, iterable):
+        self.iterable = iterable
+
+    def __repr__(self):
+        return repr(self.iterable)
+
+    def get(self, **constrains):
+        if not constrains:
+            assert len(self.iterable) == 1
+            return self.iterable[0]
+        else:
+            return self.filter(**constrains).get()
+
+    def filter(self, **constrains):
+        return Filterable(
+            filter(self.get_filtering_function(constrains), self.iterable)
+        )
+
+    def get_filtering_function(self, constrains):
+        def filtering_function(item):
+            for name, value in constrains.iteritems():
+                if getattr(item, name) != value:
+                    return False
+            return True
+        return filtering_function
+
+
 Planet = namedtuple('Planet', 'name aphelion perihelion mass satellites')
 
 
@@ -40,7 +68,7 @@ class FilteratorTestCase(unittest2.TestCase):
             aphelion=4553946490, perihelion=4452940833, mass=Decimal('1.0E+26'),
             satellites=['Naiad', 'Thalassa','Despina', 'Galatea', 'Larissa', 'Proteus']
         )
-        self.planets = [
+        self.planets = Filterable([
             self.mercury,
             self.venus,
             self.earth,
@@ -49,12 +77,21 @@ class FilteratorTestCase(unittest2.TestCase):
             self.saturn,
             self.uranus,
             self.neptune
-        ]
+        ])
 
 
 class TestFilter(FilteratorTestCase):
-    def test(self):
-        pass
+    def test_filter_by_string(self):
+        self.assertEqual([self.mars], self.planets.filter(name='Mars').iterable)
+
+
+class TestGet(FilteratorTestCase):
+    def test_get_one(self):
+        self.assertEqual(self.mars, self.planets.filter(name='Mars').get())
+
+    def test_get_with_constrains(self):
+        self.assertEqual(self.mars, self.planets.get(name='Mars'))
+
 
 
 if __name__ == '__main__':
