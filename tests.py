@@ -66,5 +66,12 @@ class TestGet(FilteratorTestCase):
             self.people.get(sex='M')
 
 
+class TestCount(FilteratorTestCase):
+    def test_many(self):
+        self.assertEqual(2, self.people.filter(sex='M').count())
+
+    def test_zero(self):
+        self.assertEqual(0, self.people.filter(age=200).count())
+
 if __name__ == '__main__':
     unittest2.main()

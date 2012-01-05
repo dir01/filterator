@@ -17,10 +17,13 @@ class Filterable(object):
     def get(self, **constrains):
         if not constrains:
             if len(self.iterable) != 1:
-                raise MultipleValuesReturned('More tran one value returned')
+                raise MultipleValuesReturned('More than one value returned')
             return self.iterable[0]
         else:
             return self.filter(**constrains).get()
+
+    def count(self):
+        return len(self.iterable)
 
     def filter(self, **constrains):
         return self.wrap(
