@@ -8,7 +8,7 @@ class Filterable(object):
         self.iterable = iterable
 
     def __repr__(self):
-        return repr(self.iterable)
+        return '<Filterable: %s>' % repr(self.iterable)
 
     def get(self, **constrains):
         if not constrains:
