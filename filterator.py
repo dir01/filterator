@@ -37,10 +37,13 @@ class ConstraintsFactory(object):
         return ConstraintClass(self.name, self.value)
 
     def get_constraint_class(self):
-        return {
+        KEYWORD_TO_CONSTRAINT_CLASS_MAP = {
             None: ExactConstraint,
             'iexact': CaseInsensitiveExactConstraint,
-        }[self.keyword]
+        }
+        if not self.keyword in KEYWORD_TO_CONSTRAINT_CLASS_MAP:
+            raise NotImplementedError('Keyword "%s" is not yet supported' % self.keyword)
+        return KEYWORD_TO_CONSTRAINT_CLASS_MAP[self.keyword]
 
     def get_name_and_keyword(self, name):
         name_keyword = name.split(self.KEYWORD_SEPARATOR)
