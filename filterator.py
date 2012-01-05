@@ -1,11 +1,7 @@
 import operator
 import unittest2
 from collections import namedtuple
-
-
-class MultipleValuesReturned(Exception):
-    pass
-
+from errors import MultipleValuesReturned
 
 class BaseConstraint(object):
     def __init__(self, name, value):

@@ -1,0 +1,2 @@
+class MultipleValuesReturned(Exception):
+    pass
