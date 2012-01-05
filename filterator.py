@@ -63,7 +63,7 @@ class ConstraintsFactory(object):
 
     def get_constraint_class(self):
         KEYWORD_TO_CONSTRAINT_CLASS_MAP = {
-            None: ExactConstraint,
+            'exact': ExactConstraint,
             'iexact': CaseInsensitiveExactConstraint,
             'gt': GtConstraint,
             'gte': GteConstraint,
@@ -77,7 +77,7 @@ class ConstraintsFactory(object):
     def get_name_and_keyword(self, name):
         name_keyword = name.split(self.KEYWORD_SEPARATOR)
         if len(name_keyword) == 1:
-            name_keyword.append(None)
+            name_keyword.append('exact')
         return name_keyword
 
 
