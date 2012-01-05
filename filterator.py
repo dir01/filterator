@@ -15,7 +15,7 @@ class BaseConstraint(object):
         raise NotImplemented()
 
 
-class EqualsConstraint(BaseConstraint):
+class ExactConstraint(BaseConstraint):
     def fits(self, item):
         return self.resolve_value(item) == self.value
 
@@ -33,7 +33,7 @@ class ConstraintsFactory(object):
 
     def get_constraint_class(self):
         return {
-            None: EqualsConstraint,
+            None: ExactConstraint,
         }[self.keyword]
 
     def get_name_and_keyword(self, name):
