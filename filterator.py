@@ -10,6 +10,11 @@ class Filterable(object):
     def __repr__(self):
         return '<Filterable: %s>' % repr(self.iterable)
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.iterable == other.iterable
+        return self.iterable == other
+
     def get(self, **constrains):
         if not constrains:
             assert len(self.iterable) == 1
