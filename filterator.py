@@ -25,6 +25,11 @@ class CaseInsensitiveExactConstraint(BaseConstraint):
         return self.resolve_value(item).lower() == self.value.lower()
 
 
+class ContainsConstraint(BaseConstraint):
+    def fits(self, item):
+        return self.value in self.resolve_value(item)
+
+
 class BaseComparativeConstraint(BaseConstraint):
     def fits(self, item):
         return self.COMPARATIVE_FUNCTION(self.resolve_value(item), self.value)
@@ -75,6 +80,7 @@ class ConstraintsFactory(object):
         KEYWORD_TO_CONSTRAINT_CLASS_MAP = {
             'exact': ExactConstraint,
             'iexact': CaseInsensitiveExactConstraint,
+            'contains': ContainsConstraint,
             'gt': GtConstraint,
             'gte': GteConstraint,
             'lt': LtConstraint,
