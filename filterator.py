@@ -23,7 +23,7 @@ class Filterable(object):
             return self.filter(**constrains).get()
 
     def filter(self, **constrains):
-        return Filterable(
+        return self.wrap(
             filter(self.get_filtering_function(constrains), self.iterable)
         )
 
@@ -34,6 +34,9 @@ class Filterable(object):
                     return False
             return True
         return filtering_function
+
+    def wrap(self, iterable):
+        return self.__class__(iterable)
 
 
 class FilteratorTestCase(unittest2.TestCase):
