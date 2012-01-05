@@ -165,6 +165,9 @@ class TestFilter(FilteratorTestCase):
     def test_filter_isnull_True(self):
         self.assertEqual([self.alice, self.bob], self.people.filter(children__isnull=True))
 
+    def test_filter_count(self):
+        self.assertEqual([self.alice], self.people.filter(children__count=1))
+
 
 class TestGet(FilteratorTestCase):
     def test_get_one(self):
