@@ -50,6 +50,11 @@ class LteConstraint(BaseComparativeConstraint):
     COMPARATIVE_FUNCTION = operator.le
 
 
+class IsnullConstraint(BaseComparativeConstraint):
+    def fits(self, item):
+        return bool(self.resolve_value(item)) == self.value
+
+
 class ConstraintsFactory(object):
     KEYWORD_SEPARATOR = '__'
 
@@ -69,6 +74,7 @@ class ConstraintsFactory(object):
             'gte': GteConstraint,
             'lt': LtConstraint,
             'lte': LteConstraint,
+            'isnull': IsnullConstraint,
         }
         if not self.keyword in KEYWORD_TO_CONSTRAINT_CLASS_MAP:
             raise NotImplementedError('Keyword "%s" is not yet supported' % self.keyword)
