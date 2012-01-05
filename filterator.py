@@ -20,6 +20,11 @@ class ExactConstraint(BaseConstraint):
         return self.resolve_value(item) == self.value
 
 
+class CaseInsensitiveExactConstraint(BaseConstraint):
+    def fits(self, item):
+        return self.resolve_value(item).lower() == self.value.lower()
+
+
 class ConstraintsFactory(object):
     KEYWORD_SEPARATOR = '__'
 
@@ -34,6 +39,7 @@ class ConstraintsFactory(object):
     def get_constraint_class(self):
         return {
             None: ExactConstraint,
+            'iexact': CaseInsensitiveExactConstraint,
         }[self.keyword]
 
     def get_name_and_keyword(self, name):
@@ -99,6 +105,9 @@ class TestFilter(FilteratorTestCase):
 
     def test_filter_by_int(self):
         self.assertEqual([self.alice], self.people.filter(age=23))
+
+    def test_filter_iexact(self):
+        self.assertEqual([self.bob], self.people.filter(name__iexact='bob'))
 
 
 class TestGet(FilteratorTestCase):
