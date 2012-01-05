@@ -153,6 +153,9 @@ class TestFilter(FilteratorTestCase):
     def test_filter_iexact(self):
         self.assertEqual([self.bob], self.people.filter(name__iexact='bob'))
 
+    def test_filter_contains(self):
+        self.assertEqual([self.joe, self.bob], self.people.filter(name__contains='o'))
+
     def test_filter_gt(self):
         self.assertEqual([self.bob], self.people.filter(age__gt=23))
 
