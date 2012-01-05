@@ -112,6 +112,18 @@ class TestFilter(FilteratorTestCase):
     def test_filter_iexact(self):
         self.assertEqual([self.bob], self.people.filter(name__iexact='bob'))
 
+    def test_filter_gt(self):
+        self.assertEqual([self.bob], self.people.filter(age__gt=23))
+
+    def test_filter_gte(self):
+        self.assertEqual([self.alice, self.bob], self.people.filter(age__gte=23))
+
+    def test_filter_lt(self):
+        self.assertEqual([self.marta], self.people.filter(age__lt=7))
+
+    def test_filter_lte(self):
+        self.assertEqual([self.marta, self.joe], self.people.filter(age__lte=7))
+
 
 class TestGet(FilteratorTestCase):
     def test_get_one(self):
@@ -119,7 +131,6 @@ class TestGet(FilteratorTestCase):
 
     def test_get_with_constrains(self):
         self.assertEqual(self.bob, self.people.get(name='Bob'))
-
 
 
 if __name__ == '__main__':
