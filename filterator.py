@@ -1,6 +1,6 @@
+import operator
 import unittest2
 from collections import namedtuple
-from decimal import Decimal
 
 
 class BaseConstraint(object):
@@ -12,7 +12,7 @@ class BaseConstraint(object):
         return getattr(item, self.name)
 
     def fits(self, item):
-        raise NotImplemented()
+        raise NotImplementedError
 
 
 class ExactConstraint(BaseConstraint):
@@ -23,6 +23,31 @@ class ExactConstraint(BaseConstraint):
 class CaseInsensitiveExactConstraint(BaseConstraint):
     def fits(self, item):
         return self.resolve_value(item).lower() == self.value.lower()
+
+
+class BaseComparativeConstraint(BaseConstraint):
+    def fits(self, item):
+        return self.COMPARATIVE_FUNCTION(self.resolve_value(item), self.value)
+
+    @property
+    def COMPARATIVE_FUNCTION(self):
+        raise NotImplementedError('Should be implemented in inherited class')
+
+
+class GtConstraint(BaseComparativeConstraint):
+    COMPARATIVE_FUNCTION = operator.gt
+
+
+class GteConstraint(BaseComparativeConstraint):
+    COMPARATIVE_FUNCTION = operator.ge
+
+
+class LtConstraint(BaseComparativeConstraint):
+    COMPARATIVE_FUNCTION = operator.lt
+
+
+class LteConstraint(BaseComparativeConstraint):
+    COMPARATIVE_FUNCTION = operator.le
 
 
 class ConstraintsFactory(object):
@@ -40,6 +65,10 @@ class ConstraintsFactory(object):
         KEYWORD_TO_CONSTRAINT_CLASS_MAP = {
             None: ExactConstraint,
             'iexact': CaseInsensitiveExactConstraint,
+            'gt': GtConstraint,
+            'gte': GteConstraint,
+            'lt': LtConstraint,
+            'lte': LteConstraint,
         }
         if not self.keyword in KEYWORD_TO_CONSTRAINT_CLASS_MAP:
             raise NotImplementedError('Keyword "%s" is not yet supported' % self.keyword)
