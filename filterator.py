@@ -3,6 +3,46 @@ from collections import namedtuple
 from decimal import Decimal
 
 
+class BaseConstraint(object):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def resolve_value(self, item):
+        return getattr(item, self.name)
+
+    def fits(self, item):
+        raise NotImplemented()
+
+
+class EqualsConstraint(BaseConstraint):
+    def fits(self, item):
+        return self.resolve_value(item) == self.value
+
+
+class ConstraintsFactory(object):
+    KEYWORD_SEPARATOR = '__'
+
+    def __init__(self, name, value):
+        self.name, self.keyword = self.get_name_and_keyword(name)
+        self.value = value
+
+    def get_constraint(self):
+        ConstraintClass = self.get_constraint_class()
+        return ConstraintClass(self.name, self.value)
+
+    def get_constraint_class(self):
+        return {
+            None: EqualsConstraint,
+        }[self.keyword]
+
+    def get_name_and_keyword(self, name):
+        name_keyword = name.split(self.KEYWORD_SEPARATOR)
+        if len(name_keyword) == 1:
+            name_keyword.append(None)
+        return name_keyword
+
+
 class Filterable(object):
     def __init__(self, iterable):
         self.iterable = iterable
@@ -30,9 +70,8 @@ class Filterable(object):
     def get_filtering_function(self, constrains):
         def filtering_function(item):
             for name, value in constrains.iteritems():
-                if getattr(item, name) != value:
-                    return False
-            return True
+                constraint = ConstraintsFactory(name, value).get_constraint()
+                return constraint.fits(item)
         return filtering_function
 
     def wrap(self, iterable):
