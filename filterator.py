@@ -153,6 +153,12 @@ class TestFilter(FilteratorTestCase):
     def test_filter_lte(self):
         self.assertEqual([self.marta, self.joe], self.people.filter(age__lte=7))
 
+    def test_filter_isnull_False(self):
+        self.assertEqual([self.marta, self.joe], self.people.filter(childred__isnull=False))
+
+    def test_filter_isnull_True(self):
+        self.assertEqual([self.alice, self.bob], self.people.filter(childred__isnull=True))
+
 
 class TestGet(FilteratorTestCase):
     def test_get_one(self):
