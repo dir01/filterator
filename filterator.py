@@ -3,6 +3,10 @@ import unittest2
 from collections import namedtuple
 
 
+class MultipleValuesReturned(Exception):
+    pass
+
+
 class BaseConstraint(object):
     def __init__(self, name, value):
         self.name = name
@@ -113,7 +117,8 @@ class Filterable(object):
 
     def get(self, **constrains):
         if not constrains:
-            assert len(self.iterable) == 1
+            if len(self.iterable) != 1:
+                raise MultipleValuesReturned('More tran one value returned')
             return self.iterable[0]
         else:
             return self.filter(**constrains).get()
@@ -190,6 +195,10 @@ class TestGet(FilteratorTestCase):
 
     def test_get_with_constrains(self):
         self.assertEqual(self.bob, self.people.get(name='Bob'))
+
+    def test_get_with_constrains_that_fit_multiple_items_raises_exception(self):
+        with self.assertRaises(MultipleValuesReturned):
+            self.people.get(sex='M')
 
 
 if __name__ == '__main__':
