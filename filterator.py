@@ -55,6 +55,11 @@ class IsnullConstraint(BaseComparativeConstraint):
         return bool(self.resolve_value(item)) == self.value
 
 
+class CountConstraint(BaseConstraint):
+    def fits(self, item):
+        return len(self.resolve_value(item)) == self.value
+
+
 class ConstraintsFactory(object):
     KEYWORD_SEPARATOR = '__'
 
@@ -75,6 +80,7 @@ class ConstraintsFactory(object):
             'lt': LtConstraint,
             'lte': LteConstraint,
             'isnull': IsnullConstraint,
+            'count': CountConstraint,
         }
         if not self.keyword in KEYWORD_TO_CONSTRAINT_CLASS_MAP:
             raise NotImplementedError('Keyword "%s" is not yet supported' % self.keyword)
