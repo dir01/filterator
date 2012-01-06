@@ -13,8 +13,8 @@ class Filterable(object):
             return self.iterable == other.iterable
         return self.iterable == other
 
-    def filter(self, **constraints):
-        return self.execute_command(FilterCommand, **constraints)
+    def filter(self, *callables, **constraints):
+        return self.execute_command(FilterCommand, *callables, **constraints)
 
     def exclude(self, **constraints):
         return self.execute_command(ExcludeCommand, **constraints)

@@ -1,5 +1,5 @@
 from errors import MultipleValuesReturned
-from constraints import ConstraintsFactory
+from constraints import ConstraintsFactory, CallableConstraint
 
 
 __all__ = (
@@ -27,10 +27,14 @@ class BaseCommand(object):
 class BaseFilteringCommand(BaseCommand):
     def __init__(self, context, iterable, *args, **kwargs):
         super(BaseFilteringCommand, self).__init__(context, iterable, *args, **kwargs)
-        self.constraints = self.generate_constraints_from_kwargs()
+        self.constraints = self.generate_constraints_from_args_and_kwargs()
 
-    def generate_constraints_from_kwargs(self):
-        return map(self.convert_tuple_to_constraint, self.kwargs.items())
+    def generate_constraints_from_args_and_kwargs(self):
+        return map(self.convert_callable_to_constraint, self.args) + \
+               map(self.convert_tuple_to_constraint, self.kwargs.items())
+
+    def convert_callable_to_constraint(self, callable):
+        return CallableConstraint(callable)
 
     def convert_tuple_to_constraint(self, constraint_tuple):
         name, value = constraint_tuple

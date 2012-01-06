@@ -63,6 +63,22 @@ class CountConstraint(BaseConstraint):
         return len(self.resolve_value(item)) == self.value
 
 
+class CallableConstraint(object):
+    """
+    We actually need this for just one single reason:
+    to get constraint-like interface for callable constraints.
+    So, this class isn't inherited from base constraint class
+    and isn't supported by factory.
+    It's separate, different constraint class
+    """
+
+    def __init__(self, callable):
+        self.callable = callable
+
+    def fits(self, item):
+        return self.callable(item)
+
+
 class ConstraintsFactory(object):
     KEYWORD_SEPARATOR = '__'
 
