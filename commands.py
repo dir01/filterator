@@ -27,10 +27,10 @@ class BaseCommand(object):
 class BaseFilteringCommand(BaseCommand):
     def __init__(self, context, iterable, *args, **kwargs):
         super(BaseFilteringCommand, self).__init__(context, iterable, *args, **kwargs)
-        self.constraints = self.convert_constraints_dict_to_constraints(self.kwargs)
+        self.constraints = self.generate_constraints_from_kwargs()
 
-    def convert_constraints_dict_to_constraints(self, constraints_dict):
-        return map(self.convert_tuple_to_constraint, constraints_dict.items())
+    def generate_constraints_from_kwargs(self):
+        return map(self.convert_tuple_to_constraint, self.kwargs.items())
 
     def convert_tuple_to_constraint(self, constraint_tuple):
         name, value = constraint_tuple
