@@ -66,8 +66,11 @@ class TestFilter(FilteratorTestCase):
     def test_filter_count(self):
         self.assertEqual([self.alice], self.people.filter(children__count=1))
 
-    def test_filter_with_custom_function(self):
-        self.assertEqual([self.joe, self.bob], self.people.filter(self.is_persons_name_is_3_symbols_long))
+    def test_filter_with_callable_constraint(self):
+        self.assertEqual(
+            [self.joe, self.bob],
+            self.people.filter(self.is_persons_name_is_3_symbols_long)
+        )
 
 
 class TestExclude(FilteratorTestCase):
@@ -76,6 +79,12 @@ class TestExclude(FilteratorTestCase):
 
     def test_exclude_by_multiple_constraints(self):
         self.assertEqual([self.marta], self.people.exclude(sex='M', age=23))
+
+    def test_exclude_by_callable_constraint(self):
+        self.assertEqual(
+            [self.marta, self.alice],
+            self.people.exclude(self.is_persons_name_is_3_symbols_long)
+        )
 
 
 class TestGet(FilteratorTestCase):

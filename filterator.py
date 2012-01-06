@@ -16,8 +16,8 @@ class Filterable(object):
     def filter(self, *callables, **constraints):
         return self.execute_command(FilterCommand, *callables, **constraints)
 
-    def exclude(self, **constraints):
-        return self.execute_command(ExcludeCommand, **constraints)
+    def exclude(self, *callables, **constraints):
+        return self.execute_command(ExcludeCommand, *callables, **constraints)
 
     def get(self, **constrains):
         return self.execute_command(GetCommand, **constrains)
