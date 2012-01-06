@@ -2,6 +2,49 @@ from errors import MultipleValuesReturned
 from constraints import ConstraintsFactory
 
 
+class BaseCommand(object):
+    def __init__(self, context, iterable, *args, **kwargs):
+        self.context = context
+        self.args = args
+        self.kwargs = kwargs
+        self.iterable = iterable
+
+    def execute(self):
+        raise NotImplementedError()
+
+    def wrap(self, iterable):
+        return self.context.__class__(iterable)
+
+
+class BaseFilteringCommand(BaseCommand):
+    def __init__(self, context, iterable, *args, **kwargs):
+        super(BaseFilteringCommand, self).__init__(context, iterable, *args, **kwargs)
+        self.constraints = self.convert_constraints_dict_to_constraints(self.kwargs)
+
+    def convert_constraints_dict_to_constraints(self, constraints_dict):
+        return map(self.convert_tuple_to_constraint, constraints_dict.items())
+
+    def convert_tuple_to_constraint(self, constraint_tuple):
+        name, value = constraint_tuple
+        return ConstraintsFactory(name, value).get_constraint()
+
+    def execute(self):
+        return self.wrap(
+            filter(self.passes_test, self.iterable)
+        )
+
+    def passes_test(self, item):
+        raise NotImplementedError
+
+
+class FilterCommand(BaseFilteringCommand):
+    def passes_test(self, item):
+        for constraint in self.constraints:
+            if not constraint.fits(item):
+                return False
+        return True
+
+
 class Filterable(object):
     def __init__(self, iterable):
         self.iterable = iterable
@@ -14,6 +57,10 @@ class Filterable(object):
             return self.iterable == other.iterable
         return self.iterable == other
 
+    def filter(self, **constrains):
+        command =  self.build_command(FilterCommand, **constrains)
+        return command.execute()
+
     def get(self, **constrains):
         if not constrains:
             if len(self.iterable) != 1:
@@ -25,20 +72,5 @@ class Filterable(object):
     def count(self):
         return len(self.iterable)
 
-    def filter(self, **constrains):
-        return self.wrap(
-            filter(self.get_filtering_function(constrains), self.iterable)
-        )
-
-    def get_filtering_function(self, constrains):
-        def filtering_function(item):
-            for name, value in constrains.iteritems():
-                constraint = ConstraintsFactory(name, value).get_constraint()
-                result = constraint.fits(item)
-                if not result:
-                    return False
-            return True
-        return filtering_function
-
-    def wrap(self, iterable):
-        return self.__class__(iterable)
+    def build_command(self, cls, *args, **kwargs):
+        return cls(self, self.iterable, *args, **kwargs)
