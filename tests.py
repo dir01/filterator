@@ -66,10 +66,28 @@ class TestFilter(FilteratorTestCase):
     def test_filter_count(self):
         self.assertEqual([self.alice], self.people.filter(children__count=1))
 
-    def test_filter_with_callable_constraint(self):
+    def test_filter_by_callable_constraint(self):
         self.assertEqual(
             [self.joe, self.bob],
             self.people.filter(self.is_persons_name_is_3_symbols_long)
+        )
+
+    def test_filter_by_multiple_callable_constraints(self):
+        self.assertEqual(
+            [self.bob],
+            self.people.filter(
+                self.is_persons_name_is_3_symbols_long,
+                lambda p: p.age > 18
+            )
+        )
+
+    def test_filter_by_callable_constraint_combined_with_regular_constraint(self):
+        self.assertEqual(
+            [self.bob],
+            self.people.filter(
+                self.is_persons_name_is_3_symbols_long,
+                age__gt=18
+            )
         )
 
 
