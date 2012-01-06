@@ -23,6 +23,13 @@ class TestFilter(FilteratorTestCase):
     def test_multiple_constraints(self):
         self.assertEqual([self.bob], self.people.filter(sex='M', age__gte=18))
 
+    def test_routinness(self):
+        men = self.people.filter(sex='M')
+        self.assertEqual([self.joe, self.bob], men)
+        mature_men = men.filter(age__gte=18)
+        self.assertEqual([self.bob], mature_men)
+        self.assertEqual([self.joe, self.bob], men)
+
     def test_filter_by_string(self):
         self.assertEqual([self.bob], self.people.filter(name='Bob'))
 
@@ -75,6 +82,7 @@ class TestCount(FilteratorTestCase):
 
     def test_zero(self):
         self.assertEqual(0, self.people.filter(age=200).count())
+
 
 if __name__ == '__main__':
     unittest2.main()
