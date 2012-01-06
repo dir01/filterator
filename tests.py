@@ -18,6 +18,9 @@ class FilteratorTestCase(unittest2.TestCase):
             self.bob,
         ])
 
+    def is_persons_name_is_3_symbols_long(self, person):
+        return len(person.name) == 3
+
 
 class TestFilter(FilteratorTestCase):
     def test_multiple_constraints(self):
@@ -62,6 +65,9 @@ class TestFilter(FilteratorTestCase):
 
     def test_filter_count(self):
         self.assertEqual([self.alice], self.people.filter(children__count=1))
+
+    def test_filter_with_custom_function(self):
+        self.assertEqual([self.joe, self.bob], self.people.filter(self.is_persons_name_is_3_symbols_long))
 
 
 class TestExclude(FilteratorTestCase):
