@@ -81,16 +81,19 @@ class Filterable(object):
         return self.iterable == other
 
     def filter(self, **constraints):
-        return self.build_command(FilterCommand, **constraints).execute()
+        return self.execute_command(FilterCommand, **constraints)
 
     def exclude(self, **constraints):
-        return self.build_command(ExcludeCommand, **constraints).execute()
+        return self.execute_command(ExcludeCommand, **constraints)
 
     def get(self, **constrains):
-        return self.build_command(GetCommand, **constrains).execute()
+        return self.execute_command(GetCommand, **constrains)
 
     def count(self):
-        return self.build_command(CountCommand).execute()
+        return self.execute_command(CountCommand)
+
+    def execute_command(self, cls, *args, **kwargs):
+        return self.build_command(cls, *args, **kwargs).execute()
 
     def build_command(self, cls, *args, **kwargs):
         return cls(self, self.iterable, *args, **kwargs)
