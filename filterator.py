@@ -45,6 +45,14 @@ class FilterCommand(BaseFilteringCommand):
         return True
 
 
+class ExcludeCommand(BaseFilteringCommand):
+    def passes_test(self, item):
+        for constraint in self.constraints:
+            if constraint.fits(item):
+                return False
+        return True
+
+
 class Filterable(object):
     def __init__(self, iterable):
         self.iterable = iterable
@@ -57,9 +65,11 @@ class Filterable(object):
             return self.iterable == other.iterable
         return self.iterable == other
 
-    def filter(self, **constrains):
-        command =  self.build_command(FilterCommand, **constrains)
-        return command.execute()
+    def filter(self, **constraints):
+        return self.build_command(FilterCommand, **constraints).execute()
+
+    def exclude(self, **constraints):
+        return self.build_command(ExcludeCommand, **constraints).execute()
 
     def get(self, **constrains):
         if not constrains:
