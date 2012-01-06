@@ -63,6 +63,10 @@ class GetCommand(BaseCommand):
             return self.context.filter(**self.kwargs).get()
 
 
+class CountCommand(BaseCommand):
+    def execute(self):
+        return len(self.iterable)
+
 
 class Filterable(object):
     def __init__(self, iterable):
@@ -86,7 +90,7 @@ class Filterable(object):
         return self.build_command(GetCommand, **constrains).execute()
 
     def count(self):
-        return len(self.iterable)
+        return self.build_command(CountCommand).execute()
 
     def build_command(self, cls, *args, **kwargs):
         return cls(self, self.iterable, *args, **kwargs)
