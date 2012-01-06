@@ -20,6 +20,9 @@ class FilteratorTestCase(unittest2.TestCase):
 
 
 class TestFilter(FilteratorTestCase):
+    def test_multiple_constraints(self):
+        self.assertEqual([self.bob], self.people.filter(sex='M', age__gte=18))
+
     def test_filter_by_string(self):
         self.assertEqual([self.bob], self.people.filter(name='Bob'))
 

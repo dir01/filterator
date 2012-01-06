@@ -34,7 +34,10 @@ class Filterable(object):
         def filtering_function(item):
             for name, value in constrains.iteritems():
                 constraint = ConstraintsFactory(name, value).get_constraint()
-                return constraint.fits(item)
+                result = constraint.fits(item)
+                if not result:
+                    return False
+            return True
         return filtering_function
 
     def wrap(self, iterable):
