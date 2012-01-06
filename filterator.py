@@ -14,19 +14,19 @@ class Filterable(object):
         return self.iterable == other
 
     def filter(self, *callables, **constraints):
-        return self.execute_command(FilterCommand, *callables, **constraints)
+        return self.__execute_command(FilterCommand, *callables, **constraints)
 
     def exclude(self, *callables, **constraints):
-        return self.execute_command(ExcludeCommand, *callables, **constraints)
+        return self.__execute_command(ExcludeCommand, *callables, **constraints)
 
     def get(self, *callables, **constrains):
-        return self.execute_command(GetCommand, *callables, **constrains)
+        return self.__execute_command(GetCommand, *callables, **constrains)
 
     def count(self):
-        return self.execute_command(CountCommand)
+        return self.__execute_command(CountCommand)
 
-    def execute_command(self, cls, *args, **kwargs):
-        return self.build_command(cls, *args, **kwargs).execute()
+    def __execute_command(self, cls, *args, **kwargs):
+        return self.__build_command(cls, *args, **kwargs).execute()
 
-    def build_command(self, cls, *args, **kwargs):
+    def __build_command(self, cls, *args, **kwargs):
         return cls(self, self.iterable, *args, **kwargs)
