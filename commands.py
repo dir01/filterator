@@ -67,12 +67,12 @@ class ExcludeCommand(BaseFilteringCommand):
 
 class GetCommand(BaseCommand):
     def execute(self):
-        if not self.kwargs:
+        if not (self.args or self.kwargs):
             if len(self.iterable) != 1:
                 raise MultipleValuesReturned('More than one value returned')
             return self.iterable[0]
         else:
-            return self.context.filter(**self.kwargs).get()
+            return self.context.filter(*self.args, **self.kwargs).get()
 
 
 class CountCommand(BaseCommand):

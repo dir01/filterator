@@ -98,6 +98,9 @@ class TestGet(FilteratorTestCase):
         with self.assertRaises(MultipleValuesReturned):
             self.people.get(sex='M')
 
+    def test_get_by_callable_constraint(self):
+        self.assertEqual(self.bob, self.people.get(lambda p: p.name == 'Bob'))
+
 
 class TestCount(FilteratorTestCase):
     def test_many(self):
