@@ -2,6 +2,14 @@ from errors import MultipleValuesReturned
 from constraints import ConstraintsFactory
 
 
+__all__ = (
+    'FilterCommand',
+    'ExcludeCommand',
+    'GetCommand',
+    'CountCommand',
+)
+
+
 class BaseCommand(object):
     def __init__(self, context, iterable, *args, **kwargs):
         self.context = context
