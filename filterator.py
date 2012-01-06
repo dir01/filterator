@@ -53,6 +53,17 @@ class ExcludeCommand(BaseFilteringCommand):
         return True
 
 
+class GetCommand(BaseCommand):
+    def execute(self):
+        if not self.kwargs:
+            if len(self.iterable) != 1:
+                raise MultipleValuesReturned('More than one value returned')
+            return self.iterable[0]
+        else:
+            return self.context.filter(**self.kwargs).get()
+
+
+
 class Filterable(object):
     def __init__(self, iterable):
         self.iterable = iterable
@@ -72,12 +83,7 @@ class Filterable(object):
         return self.build_command(ExcludeCommand, **constraints).execute()
 
     def get(self, **constrains):
-        if not constrains:
-            if len(self.iterable) != 1:
-                raise MultipleValuesReturned('More than one value returned')
-            return self.iterable[0]
-        else:
-            return self.filter(**constrains).get()
+        return self.build_command(GetCommand, **constrains).execute()
 
     def count(self):
         return len(self.iterable)
