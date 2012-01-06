@@ -64,6 +64,14 @@ class TestFilter(FilteratorTestCase):
         self.assertEqual([self.alice], self.people.filter(children__count=1))
 
 
+class TestExclude(FilteratorTestCase):
+    def test_exclude_men(self):
+        self.assertEqual([self.marta, self.alice], self.people.exclude(sex='M'))
+
+    def test_exclude_by_multiple_constraints(self):
+        self.assertEqual([self.marta], self.people.exclude(sex='M', age=23))
+
+
 class TestGet(FilteratorTestCase):
     def test_get_one(self):
         self.assertEqual(self.bob, self.people.filter(name='Bob').get())
