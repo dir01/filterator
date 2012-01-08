@@ -163,6 +163,12 @@ class TestOrdering(FilteratorTestCase):
             self.creatures.order_by('-number_of_eyes', 'number_of_legs')
         )
 
+    def test_order_by_string(self):
+        self.assertEqual([self.dog, self.human, self.spider], self.creatures.order_by('name'))
+
+    def test_order_by_string_reversed(self):
+        self.assertEqual([self.spider, self.human, self.dog], self.creatures.order_by('-name'))
+
 
 if __name__ == '__main__':
     unittest2.main()
