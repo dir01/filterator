@@ -145,6 +145,9 @@ class TestOrdering(FilteratorTestCase):
     def test_order_by_multiple_ints(self):
         self.assertEqual([self.human, self.dog, self.spider], self.creatures.order_by('number_of_eyes', 'number_of_legs'))
 
+    def test_by_reversed_keys(self):
+       self.assertEqual([self.spider, self.dog, self.human], self.creatures.order_by('-number_of_legs'))
+
 
 if __name__ == '__main__':
     unittest2.main()
