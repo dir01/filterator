@@ -143,10 +143,19 @@ class TestOrdering(FilteratorTestCase):
         self.assertEqual([self.dog, self.human, self.spider], self.creatures.order_by('number_of_eyes'))
 
     def test_order_by_multiple_ints(self):
-        self.assertEqual([self.human, self.dog, self.spider], self.creatures.order_by('number_of_eyes', 'number_of_legs'))
+        self.assertEqual(
+            [self.human, self.dog, self.spider],
+            self.creatures.order_by('number_of_eyes', 'number_of_legs')
+        )
 
-    def test_by_reversed_keys(self):
+    def test_order_by_reversed_key(self):
        self.assertEqual([self.spider, self.dog, self.human], self.creatures.order_by('-number_of_legs'))
+
+    def test_order_by_multiple_reversed_keys(self):
+        self.assertEqual(
+            [self.spider, self.dog, self.human],
+            self.creatures.order_by('-number_of_eyes', '-number_of_legs')
+        )
 
 
 if __name__ == '__main__':
