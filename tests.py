@@ -157,6 +157,12 @@ class TestOrdering(FilteratorTestCase):
             self.creatures.order_by('-number_of_eyes', '-number_of_legs')
         )
 
+    def test_order_by_multiple_mixed_reversed_and_unreversed_keys(self):
+        self.assertEqual(
+            [self.spider, self.human, self.dog],
+            self.creatures.order_by('-number_of_eyes', 'number_of_legs')
+        )
+
 
 if __name__ == '__main__':
     unittest2.main()

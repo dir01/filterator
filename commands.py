@@ -68,11 +68,39 @@ class ExcludeCommand(BaseFilteringCommand):
 
 class OrderCommand(BaseCommand):
     def execute(self):
-        return self.get_elements_sorted_by_key()
+        if self.is_key_sorting_possible():
+            return self.get_elements_sorted_by_key()
+        else:
+            return self.get_elements_sorted_by_cmp_function()
+
+    def is_key_sorting_possible(self):
+        if len(self.get_keys()) == 1:
+            return True
+        if self.is_all_keys_start_with_minus():
+            return True
+        if self.is_all_key_dont_start_with_minus():
+            return True
+        return False
 
     def get_elements_sorted_by_key(self):
         get_attributes = lambda i: tuple([getattr(i, key) for key in self.get_keys()])
         return sorted(self.iterable, key=get_attributes, reverse=self.is_reversed())
+
+    def get_elements_sorted_by_cmp_function(self):
+        return sorted(self.iterable, cmp=self.get_cmp_function())
+
+    def get_cmp_function(self):
+        def cmp_function(item, other):
+            for key in self.args:
+                reverse = True if self.is_starts_with_minus(key) else False
+                if reverse:
+                    key = self.strip_minus(key)
+                result = cmp(getattr(item, key), getattr(other, key))
+                if result == 0:
+                    continue
+                return result * (-1 if reverse else 1)
+            return 0
+        return cmp_function
 
     def get_keys(self):
         return map(self.strip_minus, self.args)
@@ -82,9 +110,18 @@ class OrderCommand(BaseCommand):
 
     def is_all_keys_start_with_minus(self):
         for key in self.args:
-            if not key.startswith('-'):
+            if not self.is_starts_with_minus(key):
                 return False
         return True
+
+    def is_all_key_dont_start_with_minus(self):
+        for key in self.args:
+            if self.is_starts_with_minus(key):
+                return False
+        return True
+
+    def is_starts_with_minus(self, key):
+        return key.startswith('-')
 
     def strip_minus(self, key):
         return key.strip('-')
