@@ -19,6 +19,9 @@ class Filterable(object):
     def exclude(self, *callables, **constraints):
         return self.__execute_command(ExcludeCommand, *callables, **constraints)
 
+    def order_by(self, *keys):
+        return self.__execute_command(OrderCommand, *keys)
+
     def get(self, *callables, **constrains):
         return self.__execute_command(GetCommand, *callables, **constrains)
 

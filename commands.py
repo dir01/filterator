@@ -5,6 +5,7 @@ from constraints import ConstraintsFactory, CallableConstraint
 __all__ = (
     'FilterCommand',
     'ExcludeCommand',
+    'OrderCommand',
     'GetCommand',
     'CountCommand',
 )
@@ -63,6 +64,14 @@ class ExcludeCommand(BaseFilteringCommand):
             if constraint.fits(item):
                 return False
         return True
+
+
+class OrderCommand(BaseCommand):
+    def execute(self):
+        return self.get_elements_sorted_by_key()
+
+    def get_elements_sorted_by_key(self):
+        return sorted(self.iterable, key=lambda i: tuple([getattr(i, key) for key in self.args]))
 
 
 class GetCommand(BaseCommand):
