@@ -137,10 +137,13 @@ class TestOrdering(FilteratorTestCase):
         self.creatures = Filterable([self.dog, self.human, self.spider])
 
     def test_order_by_int(self):
-        self.assertEqual(
-            [self.human, self.dog, self.spider],
-            self.creatures.order_by('number_of_legs')
-        )
+        self.assertEqual([self.human, self.dog, self.spider], self.creatures.order_by('number_of_legs'))
+
+    def test_equal_items_remains_in_original_order(self):
+        self.assertEqual([self.dog, self.human, self.spider], self.creatures.order_by('number_of_eyes'))
+
+    def test_order_by_multiple_ints(self):
+        self.assertEqual([self.human, self.dog, self.spider], self.creatures.order_by('number_of_eyes', 'number_of_legs'))
 
 
 if __name__ == '__main__':
