@@ -71,7 +71,23 @@ class OrderCommand(BaseCommand):
         return self.get_elements_sorted_by_key()
 
     def get_elements_sorted_by_key(self):
-        return sorted(self.iterable, key=lambda i: tuple([getattr(i, key) for key in self.args]))
+        get_attributes = lambda i: tuple([getattr(i, key) for key in self.get_keys()])
+        return sorted(self.iterable, key=get_attributes, reverse=self.is_reversed())
+
+    def get_keys(self):
+        return map(self.strip_minus, self.args)
+
+    def is_reversed(self):
+        return self.is_all_keys_start_with_minus()
+
+    def is_all_keys_start_with_minus(self):
+        for key in self.args:
+            if not key.startswith('-'):
+                return False
+        return True
+
+    def strip_minus(self, key):
+        return key.strip('-')
 
 
 class GetCommand(BaseCommand):
