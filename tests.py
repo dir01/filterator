@@ -128,5 +128,20 @@ class TestCount(FilteratorTestCase):
         self.assertEqual(0, self.people.filter(age=200).count())
 
 
+class TestOrdering(FilteratorTestCase):
+    def setUp(self):
+        Creature = namedtuple('Creature', 'name number_of_legs number_of_eyes')
+        self.dog = Creature(name='dog', number_of_legs=4, number_of_eyes=2)
+        self.spider = Creature(name='spider', number_of_legs=8, number_of_eyes=9000)
+        self.human = Creature(name='human', number_of_legs=2, number_of_eyes=2)
+        self.creatures = Filterable([self.dog, self.human, self.spider])
+
+    def test_order_by_int(self):
+        self.assertEqual(
+            [self.human, self.dog, self.spider],
+            self.creatures.order_by('number_of_legs')
+        )
+
+
 if __name__ == '__main__':
     unittest2.main()
