@@ -68,45 +68,32 @@ class ExcludeCommand(BaseFilteringCommand):
 
 class OrderCommand(BaseCommand):
     def execute(self):
+        ordering_strategy = self.get_ordering_strategy()
+        return ordering_strategy.get_ordered_iterable()
+
+    def get_ordering_strategy(self):
+        return self.build_strategy(self.choose_ordering_strategy_class())
+
+    def choose_ordering_strategy_class(self):
         if self.is_key_sorting_possible():
-            return self.get_elements_sorted_by_key()
+            return KeyOrderingStrategy
         else:
-            return self.get_elements_sorted_by_cmp_function()
+            return CmpFunctionOrderingStrategy
 
     def is_key_sorting_possible(self):
-        if len(self.get_keys()) == 1:
+        if self.is_all_keys_reversed_or_all_keys_unreversed():
             return True
+        return False
+
+    def is_all_keys_reversed_or_all_keys_unreversed(self):
         if self.is_all_keys_start_with_minus():
             return True
         if self.is_all_key_dont_start_with_minus():
             return True
         return False
 
-    def get_elements_sorted_by_key(self):
-        get_attributes = lambda i: tuple([getattr(i, key) for key in self.get_keys()])
-        return sorted(self.iterable, key=get_attributes, reverse=self.is_reversed())
-
-    def get_elements_sorted_by_cmp_function(self):
-        return sorted(self.iterable, cmp=self.get_cmp_function())
-
-    def get_cmp_function(self):
-        def cmp_function(item, other):
-            for key in self.args:
-                reverse = True if self.is_starts_with_minus(key) else False
-                if reverse:
-                    key = self.strip_minus(key)
-                result = cmp(getattr(item, key), getattr(other, key))
-                if result == 0:
-                    continue
-                return result * (-1 if reverse else 1)
-            return 0
-        return cmp_function
-
-    def get_keys(self):
-        return map(self.strip_minus, self.args)
-
-    def is_reversed(self):
-        return self.is_all_keys_start_with_minus()
+    def build_strategy(self, strategy_cls):
+        return strategy_cls(self.iterable, keys=self.args)
 
     def is_all_keys_start_with_minus(self):
         for key in self.args:
@@ -123,8 +110,56 @@ class OrderCommand(BaseCommand):
     def is_starts_with_minus(self, key):
         return key.startswith('-')
 
+
+class BaseOrderingStrategy(object):
+    def __init__(self, iterable, keys):
+        self.iterable = iterable
+        self.keys = keys
+
+    def get_ordered_iterable(self):
+        raise NotImplementedError
+
+    def is_starts_with_minus(self, key):
+        return key.startswith('-')
+
     def strip_minus(self, key):
         return key.strip('-')
+
+
+class KeyOrderingStrategy(BaseOrderingStrategy):
+    def get_ordered_iterable(self):
+        return sorted(self.iterable, key=self.get_attributes, reverse=self.is_reversed())
+
+    def is_reversed(self):
+        return self.is_all_keys_start_with_minus()
+
+    def get_attributes(self, item):
+        return tuple([getattr(item, key) for key in self.get_keys()])
+
+    def get_keys(self):
+        return map(self.strip_minus, self.keys)
+
+    def is_all_keys_start_with_minus(self):
+        for key in self.keys:
+            if not self.is_starts_with_minus(key):
+                return False
+        return True
+
+
+class CmpFunctionOrderingStrategy(BaseOrderingStrategy):
+    def get_ordered_iterable(self):
+        return sorted(self.iterable, cmp=self.cmp_function)
+
+    def cmp_function(self, item, other):
+        for key in self.keys:
+            reverse = True if self.is_starts_with_minus(key) else False
+            if reverse:
+                key = self.strip_minus(key)
+            result = cmp(getattr(item, key), getattr(other, key))
+            if result == 0:
+                continue
+            return result * (-1 if reverse else 1)
+        return 0
 
 
 class GetCommand(BaseCommand):
