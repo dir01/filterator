@@ -57,6 +57,9 @@ class TestFilter(FilteratorTestCase):
     def test_filter_iendswith(self):
         self.assertEqual([self.bob], self.people.filter(name__iendswith='OB'))
 
+    def test_filter_regex(self):
+        self.assertEqual([self.alice, self.bob], self.people.filter(name__regex='^[AB].*$'))
+
     def test_filter_gt(self):
         self.assertEqual([self.bob], self.people.filter(age__gt=23))
 

@@ -1,4 +1,5 @@
 import operator
+import re
 
 
 class BaseConstraint(object):
@@ -41,6 +42,15 @@ class EndsWithConstraint(BaseConstraint):
 class CaseInsensitiveEndsWithConstraint(BaseConstraint):
     def fits(self, item):
         return self.resolve_value(item).lower().endswith(self.value.lower())
+
+
+class RegexConstraint(BaseConstraint):
+    def __init__(self, name, value):
+        super(RegexConstraint, self).__init__(name, value)
+        self.regex = re.compile(self.value)
+
+    def fits(self, item):
+        return self.regex.match(self.resolve_value(item))
 
 
 class ContainsConstraint(BaseConstraint):
@@ -119,6 +129,7 @@ class ConstraintsFactory(object):
             'endswith': EndsWithConstraint,
             'iendswith': CaseInsensitiveEndsWithConstraint,
             'contains': ContainsConstraint,
+            'regex': RegexConstraint,
             'gt': GtConstraint,
             'gte': GteConstraint,
             'lt': LtConstraint,
