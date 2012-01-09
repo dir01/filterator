@@ -28,6 +28,9 @@ class Filterable(object):
     def count(self):
         return self.__execute_command(CountCommand)
 
+    def exists(self):
+        return self.__execute_command(ExistsCommand)
+
     def __execute_command(self, cls, *args, **kwargs):
         return self.__build_command(cls, *args, **kwargs).execute()
 

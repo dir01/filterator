@@ -140,6 +140,14 @@ class TestCount(FilteratorTestCase):
         self.assertEqual(0, self.people.filter(age=200).count())
 
 
+class TestExists(FilteratorTestCase):
+    def test_exists(self):
+        self.assertEqual(True, self.people.filter(name='Bob').exists())
+
+    def test_does_not_exists(self):
+        self.assertEqual(False, self.people.filter(name='Cris').exists())
+
+
 class TestOrdering(FilteratorTestCase):
     def setUp(self):
         Creature = namedtuple('Creature', 'name number_of_legs number_of_eyes')

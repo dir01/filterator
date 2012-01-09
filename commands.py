@@ -8,6 +8,7 @@ __all__ = (
     'OrderCommand',
     'GetCommand',
     'CountCommand',
+    'ExistsCommand',
 )
 
 
@@ -175,3 +176,8 @@ class GetCommand(BaseCommand):
 class CountCommand(BaseCommand):
     def execute(self):
         return len(self.iterable)
+
+
+class ExistsCommand(BaseCommand):
+    def execute(self):
+        return bool(self.iterable)
