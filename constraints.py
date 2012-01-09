@@ -23,6 +23,26 @@ class CaseInsensitiveExactConstraint(BaseConstraint):
         return self.resolve_value(item).lower() == self.value.lower()
 
 
+class StartsWithConstraint(BaseConstraint):
+    def fits(self, item):
+        return self.resolve_value(item).startswith(self.value)
+
+
+class CaseInsensitiveStartsWithConstraint(BaseConstraint):
+    def fits(self, item):
+        return self.resolve_value(item).lower().startswith(self.value.lower())
+
+
+class EndsWithConstraint(BaseConstraint):
+    def fits(self, item):
+        return self.resolve_value(item).endswith(self.value)
+
+
+class CaseInsensitiveEndsWithConstraint(BaseConstraint):
+    def fits(self, item):
+        return self.resolve_value(item).lower().endswith(self.value.lower())
+
+
 class ContainsConstraint(BaseConstraint):
     def fits(self, item):
         return self.value in self.resolve_value(item)
@@ -94,6 +114,10 @@ class ConstraintsFactory(object):
         KEYWORD_TO_CONSTRAINT_CLASS_MAP = {
             'exact': ExactConstraint,
             'iexact': CaseInsensitiveExactConstraint,
+            'startswith': StartsWithConstraint,
+            'istartswith': CaseInsensitiveStartsWithConstraint,
+            'endswith': EndsWithConstraint,
+            'iendswith': CaseInsensitiveEndsWithConstraint,
             'contains': ContainsConstraint,
             'gt': GtConstraint,
             'gte': GteConstraint,

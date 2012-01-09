@@ -45,6 +45,18 @@ class TestFilter(FilteratorTestCase):
     def test_filter_contains(self):
         self.assertEqual([self.joe, self.bob], self.people.filter(name__contains='o'))
 
+    def test_filter_startswith(self):
+        self.assertEqual([self.bob], self.people.filter(name__startswith='B'))
+
+    def test_filter_istartswith(self):
+        self.assertEqual([self.bob], self.people.filter(name__istartswith='b'))
+
+    def test_filter_endswith(self):
+        self.assertEqual([self.bob], self.people.filter(name__endswith='ob'))
+
+    def test_filter_iendswith(self):
+        self.assertEqual([self.bob], self.people.filter(name__iendswith='OB'))
+
     def test_filter_gt(self):
         self.assertEqual([self.bob], self.people.filter(age__gt=23))
 
