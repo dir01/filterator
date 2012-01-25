@@ -24,71 +24,71 @@ class FilteratorTestCase(unittest2.TestCase):
 
 class TestFilter(FilteratorTestCase):
     def test_multiple_constraints(self):
-        self.assertEqual([self.bob], self.people.filter(sex='M', age__gte=18))
+        self.assertItemsEqual([self.bob], self.people.filter(sex='M', age__gte=18))
 
     def test_routinness(self):
         men = self.people.filter(sex='M')
-        self.assertEqual([self.joe, self.bob], men)
+        self.assertItemsEqual([self.joe, self.bob], men)
         mature_men = men.filter(age__gte=18)
-        self.assertEqual([self.bob], mature_men)
-        self.assertEqual([self.joe, self.bob], men)
+        self.assertItemsEqual([self.bob], mature_men)
+        self.assertItemsEqual([self.joe, self.bob], men)
 
     def test_filter_by_string(self):
-        self.assertEqual([self.bob], self.people.filter(name='Bob'))
+        self.assertItemsEqual([self.bob], self.people.filter(name='Bob'))
 
     def test_filter_by_int(self):
-        self.assertEqual([self.alice], self.people.filter(age=23))
+        self.assertItemsEqual([self.alice], self.people.filter(age=23))
 
     def test_filter_iexact(self):
-        self.assertEqual([self.bob], self.people.filter(name__iexact='bob'))
+        self.assertItemsEqual([self.bob], self.people.filter(name__iexact='bob'))
 
     def test_filter_contains(self):
-        self.assertEqual([self.joe, self.bob], self.people.filter(name__contains='o'))
+        self.assertItemsEqual([self.joe, self.bob], self.people.filter(name__contains='o'))
 
     def test_filter_startswith(self):
-        self.assertEqual([self.bob], self.people.filter(name__startswith='B'))
+        self.assertItemsEqual([self.bob], self.people.filter(name__startswith='B'))
 
     def test_filter_istartswith(self):
-        self.assertEqual([self.bob], self.people.filter(name__istartswith='b'))
+        self.assertItemsEqual([self.bob], self.people.filter(name__istartswith='b'))
 
     def test_filter_endswith(self):
-        self.assertEqual([self.bob], self.people.filter(name__endswith='ob'))
+        self.assertItemsEqual([self.bob], self.people.filter(name__endswith='ob'))
 
     def test_filter_iendswith(self):
-        self.assertEqual([self.bob], self.people.filter(name__iendswith='OB'))
+        self.assertItemsEqual([self.bob], self.people.filter(name__iendswith='OB'))
 
     def test_filter_regex(self):
-        self.assertEqual([self.alice, self.bob], self.people.filter(name__regex='^[AB].*$'))
+        self.assertItemsEqual([self.alice, self.bob], self.people.filter(name__regex='^[AB].*$'))
 
     def test_filter_gt(self):
-        self.assertEqual([self.bob], self.people.filter(age__gt=23))
+        self.assertItemsEqual([self.bob], self.people.filter(age__gt=23))
 
     def test_filter_gte(self):
-        self.assertEqual([self.alice, self.bob], self.people.filter(age__gte=23))
+        self.assertItemsEqual([self.alice, self.bob], self.people.filter(age__gte=23))
 
     def test_filter_lt(self):
-        self.assertEqual([self.marta], self.people.filter(age__lt=7))
+        self.assertItemsEqual([self.marta], self.people.filter(age__lt=7))
 
     def test_filter_lte(self):
-        self.assertEqual([self.marta, self.joe], self.people.filter(age__lte=7))
+        self.assertItemsEqual([self.marta, self.joe], self.people.filter(age__lte=7))
 
     def test_filter_isnull_False(self):
-        self.assertEqual([self.marta, self.joe], self.people.filter(children__isnull=False))
+        self.assertItemsEqual([self.marta, self.joe], self.people.filter(children__isnull=False))
 
     def test_filter_isnull_True(self):
-        self.assertEqual([self.alice, self.bob], self.people.filter(children__isnull=True))
+        self.assertItemsEqual([self.alice, self.bob], self.people.filter(children__isnull=True))
 
     def test_filter_count(self):
-        self.assertEqual([self.alice], self.people.filter(children__count=1))
+        self.assertItemsEqual([self.alice], self.people.filter(children__count=1))
 
     def test_filter_by_callable_constraint(self):
-        self.assertEqual(
+        self.assertItemsEqual(
             [self.joe, self.bob],
             self.people.filter(self.is_persons_name_is_3_symbols_long)
         )
 
     def test_filter_by_multiple_callable_constraints(self):
-        self.assertEqual(
+        self.assertItemsEqual(
             [self.bob],
             self.people.filter(
                 self.is_persons_name_is_3_symbols_long,
@@ -97,7 +97,7 @@ class TestFilter(FilteratorTestCase):
         )
 
     def test_filter_by_callable_constraint_combined_with_regular_constraint(self):
-        self.assertEqual(
+        self.assertItemsEqual(
             [self.bob],
             self.people.filter(
                 self.is_persons_name_is_3_symbols_long,
@@ -108,13 +108,13 @@ class TestFilter(FilteratorTestCase):
 
 class TestExclude(FilteratorTestCase):
     def test_exclude_men(self):
-        self.assertEqual([self.marta, self.alice], self.people.exclude(sex='M'))
+        self.assertItemsEqual([self.marta, self.alice], self.people.exclude(sex='M'))
 
     def test_exclude_by_multiple_constraints(self):
-        self.assertEqual([self.marta], self.people.exclude(sex='M', age=23))
+        self.assertItemsEqual([self.marta], self.people.exclude(sex='M', age=23))
 
     def test_exclude_by_callable_constraint(self):
-        self.assertEqual(
+        self.assertItemsEqual(
             [self.marta, self.alice],
             self.people.exclude(self.is_persons_name_is_3_symbols_long)
         )
@@ -122,17 +122,17 @@ class TestExclude(FilteratorTestCase):
 
 class TestGet(FilteratorTestCase):
     def test_get_one(self):
-        self.assertEqual(self.bob, self.people.filter(name='Bob').get())
+        self.assertItemsEqual(self.bob, self.people.filter(name='Bob').get())
 
     def test_get_with_constrains(self):
-        self.assertEqual(self.bob, self.people.get(name='Bob'))
+        self.assertItemsEqual(self.bob, self.people.get(name='Bob'))
 
     def test_get_with_constrains_that_fit_multiple_items_raises_exception(self):
         with self.assertRaises(MultipleValuesReturned):
             self.people.get(sex='M')
 
     def test_get_by_callable_constraint(self):
-        self.assertEqual(self.bob, self.people.get(lambda p: p.name == 'Bob'))
+        self.assertItemsEqual(self.bob, self.people.get(lambda p: p.name == 'Bob'))
 
 
 class TestCount(FilteratorTestCase):
@@ -160,37 +160,37 @@ class TestOrdering(FilteratorTestCase):
         self.creatures = Filterable([self.dog, self.human, self.spider])
 
     def test_order_by_int(self):
-        self.assertEqual([self.human, self.dog, self.spider], self.creatures.order_by('number_of_legs'))
+        self.assertItemsEqual([self.human, self.dog, self.spider], self.creatures.order_by('number_of_legs'))
 
     def test_equal_items_remains_in_original_order(self):
-        self.assertEqual([self.dog, self.human, self.spider], self.creatures.order_by('number_of_eyes'))
+        self.assertItemsEqual([self.dog, self.human, self.spider], self.creatures.order_by('number_of_eyes'))
 
     def test_order_by_multiple_ints(self):
-        self.assertEqual(
+        self.assertItemsEqual(
             [self.human, self.dog, self.spider],
             self.creatures.order_by('number_of_eyes', 'number_of_legs')
         )
 
     def test_order_by_reversed_key(self):
-       self.assertEqual([self.spider, self.dog, self.human], self.creatures.order_by('-number_of_legs'))
+       self.assertItemsEqual([self.spider, self.dog, self.human], self.creatures.order_by('-number_of_legs'))
 
     def test_order_by_multiple_reversed_keys(self):
-        self.assertEqual(
+        self.assertItemsEqual(
             [self.spider, self.dog, self.human],
             self.creatures.order_by('-number_of_eyes', '-number_of_legs')
         )
 
     def test_order_by_multiple_mixed_reversed_and_unreversed_keys(self):
-        self.assertEqual(
+        self.assertItemsEqual(
             [self.spider, self.human, self.dog],
             self.creatures.order_by('-number_of_eyes', 'number_of_legs')
         )
 
     def test_order_by_string(self):
-        self.assertEqual([self.dog, self.human, self.spider], self.creatures.order_by('name'))
+        self.assertItemsEqual([self.dog, self.human, self.spider], self.creatures.order_by('name'))
 
     def test_order_by_string_reversed(self):
-        self.assertEqual([self.spider, self.human, self.dog], self.creatures.order_by('-name'))
+        self.assertItemsEqual([self.spider, self.human, self.dog], self.creatures.order_by('-name'))
 
 
 if __name__ == '__main__':

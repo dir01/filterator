@@ -5,13 +5,11 @@ class Filterable(object):
     def __init__(self, iterable):
         self.iterable = iterable
 
+    def __iter__(self):
+        return iter(self.iterable)
+
     def __repr__(self):
         return '<Filterable: %s>' % repr(self.iterable)
-
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.iterable == other.iterable
-        return self.iterable == other
 
     def filter(self, *callables, **constraints):
         return self.__execute_command(FilterCommand, *callables, **constraints)
