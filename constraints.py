@@ -112,6 +112,23 @@ class CallableConstraint(object):
 class ConstraintsFactory(object):
     KEYWORD_SEPARATOR = '__'
 
+    KEYWORD_TO_CONSTRAINT_CLASS_MAP = {
+        'exact': ExactConstraint,
+        'iexact': CaseInsensitiveExactConstraint,
+        'startswith': StartsWithConstraint,
+        'istartswith': CaseInsensitiveStartsWithConstraint,
+        'endswith': EndsWithConstraint,
+        'iendswith': CaseInsensitiveEndsWithConstraint,
+        'contains': ContainsConstraint,
+        'regex': RegexConstraint,
+        'gt': GtConstraint,
+        'gte': GteConstraint,
+        'lt': LtConstraint,
+        'lte': LteConstraint,
+        'isnull': IsnullConstraint,
+        'count': CountConstraint,
+        }
+
     def __init__(self, name, value):
         self.name, self.keyword = self.get_name_and_keyword(name)
         self.value = value
@@ -121,25 +138,9 @@ class ConstraintsFactory(object):
         return ConstraintClass(self.name, self.value)
 
     def get_constraint_class(self):
-        KEYWORD_TO_CONSTRAINT_CLASS_MAP = {
-            'exact': ExactConstraint,
-            'iexact': CaseInsensitiveExactConstraint,
-            'startswith': StartsWithConstraint,
-            'istartswith': CaseInsensitiveStartsWithConstraint,
-            'endswith': EndsWithConstraint,
-            'iendswith': CaseInsensitiveEndsWithConstraint,
-            'contains': ContainsConstraint,
-            'regex': RegexConstraint,
-            'gt': GtConstraint,
-            'gte': GteConstraint,
-            'lt': LtConstraint,
-            'lte': LteConstraint,
-            'isnull': IsnullConstraint,
-            'count': CountConstraint,
-        }
-        if not self.keyword in KEYWORD_TO_CONSTRAINT_CLASS_MAP:
+        if not self.keyword in self.KEYWORD_TO_CONSTRAINT_CLASS_MAP:
             raise NotImplementedError('Keyword "%s" is not yet supported' % self.keyword)
-        return KEYWORD_TO_CONSTRAINT_CLASS_MAP[self.keyword]
+        return self.KEYWORD_TO_CONSTRAINT_CLASS_MAP[self.keyword]
 
     def get_name_and_keyword(self, name):
         name_keyword = name.split(self.KEYWORD_SEPARATOR)

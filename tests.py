@@ -4,6 +4,7 @@ from collections import namedtuple
 from errors import MultipleValuesReturned
 from filterator import Filterable
 
+
 class FilteratorTestCase(unittest2.TestCase):
     def setUp(self):
         Person = namedtuple('Person', 'name age sex children')
