@@ -8,7 +8,11 @@ class BaseConstraint(object):
         self.value = value
 
     def resolve_value(self, item):
-        return getattr(item, self.name)
+        for attr in self.name.split('__'):
+            item = getattr(item, attr)
+            if item is None:
+                return None
+        return item
 
     def fits(self, item):
         raise NotImplementedError
@@ -129,21 +133,23 @@ class ConstraintsFactory(object):
         'count': CountConstraint,
         }
 
+    DEFAULT_CONSTRAINT_CLASS = ExactConstraint
+
     def __init__(self, name, value):
-        self.name, self.keyword = self.get_name_and_keyword(name)
+        self.name = name
         self.value = value
 
     def get_constraint(self):
-        ConstraintClass = self.get_constraint_class()
-        return ConstraintClass(self.name, self.value)
-
-    def get_constraint_class(self):
-        if not self.keyword in self.KEYWORD_TO_CONSTRAINT_CLASS_MAP:
-            raise NotImplementedError('Keyword "%s" is not yet supported' % self.keyword)
-        return self.KEYWORD_TO_CONSTRAINT_CLASS_MAP[self.keyword]
+        prefix, suffix = self.get_name_and_keyword(self.name)
+        if suffix and suffix in self.KEYWORD_TO_CONSTRAINT_CLASS_MAP:
+            name = prefix
+            cls = self.KEYWORD_TO_CONSTRAINT_CLASS_MAP[suffix]
+        else:
+            name = self.name
+            cls = self.DEFAULT_CONSTRAINT_CLASS
+        return cls(name, self.value)
 
     def get_name_and_keyword(self, name):
-        name_keyword = name.split(self.KEYWORD_SEPARATOR)
-        if len(name_keyword) == 1:
-            name_keyword.append('exact')
-        return name_keyword
+        if not self.KEYWORD_SEPARATOR in name:
+            return name, None
+        return name.split(self.KEYWORD_SEPARATOR)

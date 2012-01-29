@@ -7,11 +7,14 @@ from filterator import Filterable
 
 class FilteratorTestCase(unittest2.TestCase):
     def setUp(self):
-        Person = namedtuple('Person', 'name age sex children')
-        self.marta = Person('Marta', 2, 'F', [])
-        self.joe = Person('Joe', 7, 'M', [])
-        self.alice = Person('Alice', 23, 'F', [self.marta])
-        self.bob = Person('Bob', 31, 'M', [self.marta, self.joe])
+        Person = namedtuple('Person', 'name age sex children vehicle')
+        Vehicle = namedtuple('Vehicle', 'type manufacturer')
+        self.car = Vehicle('car', 'ford')
+        self.bicycle = Vehicle('bicycle', 'nsbikes')
+        self.marta = Person('Marta', 2, 'F', [], None)
+        self.joe = Person('Joe', 7, 'M', [], None)
+        self.alice = Person('Alice', 23, 'F', [self.marta], self.bicycle)
+        self.bob = Person('Bob', 31, 'M', [self.marta, self.joe], self.car)
         self.people = Filterable([
             self.marta,
             self.joe,
@@ -106,6 +109,9 @@ class TestFilter(FilteratorTestCase):
             )
         )
 
+    def test_deep(self):
+        self.assertItemsEqual([self.alice], self.people.filter(vehicle__type='bicycle'))
+
 
 class TestExclude(FilteratorTestCase):
     def test_exclude_men(self):
@@ -118,6 +124,12 @@ class TestExclude(FilteratorTestCase):
         self.assertItemsEqual(
             [self.marta, self.alice],
             self.people.exclude(self.is_persons_name_is_3_symbols_long)
+        )
+
+    def test_exclude_by_deep_attr(self):
+        self.assertItemsEqual(
+            [self.alice, self.joe, self.marta],
+            self.people.exclude(vehicle__type='car')
         )
 
 
