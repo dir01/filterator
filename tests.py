@@ -156,6 +156,11 @@ class TestCount(FilteratorTestCase):
         self.assertEqual(0, self.people.filter(age=200).count())
 
 
+class TestSum(FilteratorTestCase):
+    def test(self):
+        self.assertEqual(63, self.people.sum('age'))
+
+
 class TestExists(FilteratorTestCase):
     def test_exists(self):
         self.assertEqual(True, self.people.filter(name='Bob').exists())

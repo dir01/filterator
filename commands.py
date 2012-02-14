@@ -1,3 +1,6 @@
+from itertools import imap
+from operator import attrgetter
+
 from errors import MultipleValuesReturned
 from constraints import ConstraintsFactory, CallableConstraint
 
@@ -8,6 +11,7 @@ __all__ = (
     'OrderCommand',
     'GetCommand',
     'CountCommand',
+    'SumCommand',
     'ExistsCommand',
 )
 
@@ -176,6 +180,14 @@ class GetCommand(BaseCommand):
 class CountCommand(BaseCommand):
     def execute(self):
         return len(self.iterable)
+
+
+class SumCommand(BaseCommand):
+    def execute(self):
+        return sum(imap(attrgetter(self.get_attr_to_sum()), self.iterable))
+
+    def get_attr_to_sum(self):
+        return self.args[0]
 
 
 class ExistsCommand(BaseCommand):

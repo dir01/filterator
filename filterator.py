@@ -26,6 +26,9 @@ class Filterable(object):
     def count(self):
         return self.__execute_command(CountCommand)
 
+    def sum(self, attr):
+        return self.__execute_command(SumCommand, attr)
+
     def exists(self):
         return self.__execute_command(ExistsCommand)
 
