@@ -9,5 +9,4 @@ setup(name='Filterator',
     author='Andrey Zhu',
     author_email='dir01@dir01.org',
     url='https://github.com/dir01/filterator',
-    packages=['filterator'],
 )
