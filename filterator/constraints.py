@@ -12,6 +12,8 @@ class BaseConstraint(object):
             item = getattr(item, attr)
             if item is None:
                 return None
+            if hasattr(item, '__call__'):
+                return item()
         return item
 
     def fits(self, item):
@@ -115,6 +117,7 @@ class CallableConstraint(object):
 
 class ConstraintsFactory(object):
     KEYWORD_SEPARATOR = '__'
+    DEFAULT_CONSTRAINT_CLASS = ExactConstraint
 
     KEYWORD_TO_CONSTRAINT_CLASS_MAP = {
         'exact': ExactConstraint,
@@ -132,8 +135,6 @@ class ConstraintsFactory(object):
         'isnull': IsnullConstraint,
         'count': CountConstraint,
         }
-
-    DEFAULT_CONSTRAINT_CLASS = ExactConstraint
 
     def __init__(self, name, value):
         self.name = name

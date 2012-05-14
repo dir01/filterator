@@ -7,7 +7,9 @@ from filterator import Filterable
 
 class FilteratorTestCase(unittest2.TestCase):
     def setUp(self):
-        Person = namedtuple('Person', 'name age sex children vehicle')
+        class Person(namedtuple('Person', 'name age sex children vehicle')):
+            def is_car_driver(self):
+                return self.vehicle and self.vehicle.type == 'car'
         Vehicle = namedtuple('Vehicle', 'type manufacturer')
         self.car = Vehicle('car', 'ford')
         self.bicycle = Vehicle('bicycle', 'nsbikes')
@@ -42,6 +44,9 @@ class TestFilter(FilteratorTestCase):
 
     def test_filter_by_int(self):
         self.assertItemsEqual([self.alice], self.people.filter(age=23))
+
+    def test_filter_by_method(self):
+        self.assertItemsEqual([self.bob], self.people.filter(is_car_driver=True))
 
     def test_filter_iexact(self):
         self.assertItemsEqual([self.bob], self.people.filter(name__iexact='bob'))
