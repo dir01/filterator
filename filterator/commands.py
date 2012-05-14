@@ -3,6 +3,7 @@ from operator import attrgetter
 
 from errors import MultipleValuesReturned
 from constraints import ConstraintsFactory, CallableConstraint
+from utils import resolve_value
 
 
 __all__ = (
@@ -139,7 +140,7 @@ class KeyOrderingStrategy(BaseOrderingStrategy):
         return self.is_all_keys_start_with_minus()
 
     def get_attributes(self, item):
-        return tuple([getattr(item, key) for key in self.get_keys()])
+        return tuple(resolve_value(item, key) for key in self.get_keys())
 
     def get_keys(self):
         return map(self.strip_minus, self.keys)
@@ -160,7 +161,7 @@ class CmpFunctionOrderingStrategy(BaseOrderingStrategy):
             reverse = True if self.is_starts_with_minus(key) else False
             if reverse:
                 key = self.strip_minus(key)
-            result = cmp(getattr(item, key), getattr(other, key))
+            result = cmp(resolve_value(item, key), resolve_value(other, key))
             if result == 0:
                 continue
             return result * (-1 if reverse else 1)
