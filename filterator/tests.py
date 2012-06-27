@@ -5,12 +5,16 @@ from errors import MultipleValuesReturned
 from filterator import Filterable
 
 
+class Person(namedtuple('Person', 'name age sex children vehicle')):
+    def is_car_driver(self):
+        return self.vehicle and self.vehicle.type == 'car'
+
+
+Vehicle = namedtuple('Vehicle', 'type manufacturer')
+
+
 class FilteratorTestCase(unittest2.TestCase):
     def setUp(self):
-        class Person(namedtuple('Person', 'name age sex children vehicle')):
-            def is_car_driver(self):
-                return self.vehicle and self.vehicle.type == 'car'
-        Vehicle = namedtuple('Vehicle', 'type manufacturer')
         self.car = Vehicle('car', 'ford')
         self.bicycle = Vehicle('bicycle', 'nsbikes')
         self.marta = Person('Marta', 2, 'F', [], None)
