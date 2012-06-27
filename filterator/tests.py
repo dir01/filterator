@@ -1,3 +1,4 @@
+import re
 import unittest2
 from collections import namedtuple
 
@@ -72,6 +73,10 @@ class TestFilter(FilteratorTestCase):
 
     def test_filter_regex(self):
         self.assertItemsEqual([self.alice, self.bob], self.people.filter(name__regex='^[AB].*$'))
+
+    def test_filter_compiled_regex(self):
+        regex = re.compile('^[AB].*$')
+        self.assertItemsEqual([self.alice, self.bob], self.people.filter(name__regex=regex))
 
     def test_filter_gt(self):
         self.assertItemsEqual([self.bob], self.people.filter(age__gt=23))
