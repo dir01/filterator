@@ -1,6 +1,8 @@
 import operator
 import re
 
+from utils import resolve_value
+
 
 class BaseConstraint(object):
     def __init__(self, name, value):
@@ -8,13 +10,7 @@ class BaseConstraint(object):
         self.value = value
 
     def resolve_value(self, item):
-        for attr in self.name.split('__'):
-            item = getattr(item, attr)
-            if item is None:
-                return None
-            if hasattr(item, '__call__'):
-                return item()
-        return item
+        return resolve_value(item, self.name)
 
     def fits(self, item):
         raise NotImplementedError

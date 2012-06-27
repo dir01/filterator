@@ -184,11 +184,14 @@ class TestExists(FilteratorTestCase):
 
 
 class TestOrdering(FilteratorTestCase):
+    class Creature(namedtuple('Creature', 'name number_of_legs number_of_eyes')):
+        def get_name(self):
+            return self.name
+
     def setUp(self):
-        Creature = namedtuple('Creature', 'name number_of_legs number_of_eyes')
-        self.dog = Creature(name='dog', number_of_legs=4, number_of_eyes=2)
-        self.spider = Creature(name='spider', number_of_legs=8, number_of_eyes=9000)
-        self.human = Creature(name='human', number_of_legs=2, number_of_eyes=2)
+        self.dog = self.Creature(name='dog', number_of_legs=4, number_of_eyes=2)
+        self.spider = self.Creature(name='spider', number_of_legs=8, number_of_eyes=9000)
+        self.human = self.Creature(name='human', number_of_legs=2, number_of_eyes=2)
         self.creatures = Filterable([self.dog, self.human, self.spider])
 
     def test_order_by_int(self):
@@ -223,6 +226,9 @@ class TestOrdering(FilteratorTestCase):
 
     def test_order_by_string_reversed(self):
         self.assertItemsEqual([self.spider, self.human, self.dog], self.creatures.order_by('-name'))
+
+    def test_order_by_method(self):
+        self.assertEqual([self.dog, self.human, self.spider], self.creatures.order_by('get_name'))
 
 
 if __name__ == '__main__':
