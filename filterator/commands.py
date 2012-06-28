@@ -1,5 +1,5 @@
 from itertools import imap
-from operator import attrgetter
+from operator import attrgetter, methodcaller
 
 from errors import MultipleValuesReturned
 from constraints import ConstraintsFactory, CallableConstraint
@@ -14,6 +14,7 @@ __all__ = (
     'CountCommand',
     'SumCommand',
     'ExistsCommand',
+    'InvokeCommand',
 )
 
 
@@ -176,6 +177,18 @@ class GetCommand(BaseCommand):
             return self.iterable[0]
         else:
             return self.context.filter(*self.args, **self.kwargs).get()
+
+
+class InvokeCommand(BaseCommand):
+    def __init__(self, context, iterable, method_name, *args, **kwargs):
+        self.method_name = method_name
+        super(InvokeCommand, self).__init__(context, iterable, *args, **kwargs)
+
+    def execute(self):
+        return map(
+            methodcaller(self.method_name, *self.args, **self.kwargs),
+            self.iterable
+        )
 
 
 class CountCommand(BaseCommand):

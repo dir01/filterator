@@ -8,7 +8,15 @@ from filterator import Filterable
 
 class Person(namedtuple('Person', 'name age sex children vehicle')):
     def is_car_driver(self):
-        return self.vehicle and self.vehicle.type == 'car'
+        return self.vehicle is not None and self.vehicle.type == 'car'
+
+    def is_age_dividable_by(self, num):
+        return self.age % num == 0
+
+    def get_vehicle_manufacturer(self, default=None):
+        if self.is_car_driver():
+            return self.vehicle.manufacturer
+        return default
 
 
 Vehicle = namedtuple('Vehicle', 'type manufacturer')
@@ -229,6 +237,26 @@ class TestOrdering(FilteratorTestCase):
 
     def test_order_by_method(self):
         self.assertEqual([self.dog, self.human, self.spider], self.creatures.order_by('get_name'))
+
+
+class TestInvoke(FilteratorTestCase):
+    def test_no_arguments(self):
+        self.assertEqual(
+            [False, False, False, True],
+            self.people.invoke('is_car_driver')
+        )
+
+    def test_args(self):
+        self.assertEqual(
+            [True, False, False, False],
+            self.people.invoke('is_age_dividable_by', 2)
+        )
+
+    def test_kwargs(self):
+        self.assertEqual(
+            ['foo', 'foo', 'foo', 'ford'],
+            self.people.invoke('get_vehicle_manufacturer', default='foo')
+        )
 
 
 if __name__ == '__main__':

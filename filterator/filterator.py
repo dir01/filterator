@@ -23,6 +23,9 @@ class Filterable(object):
     def get(self, *callables, **constrains):
         return self.__execute_command(GetCommand, *callables, **constrains)
 
+    def invoke(self, method_name, *args, **kwargs):
+        return self.__execute_command(InvokeCommand, method_name, *args, **kwargs)
+
     def count(self):
         return self.__execute_command(CountCommand)
 
